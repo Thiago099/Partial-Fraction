@@ -2,7 +2,7 @@ import re
 import copy
 def solve(input):
     def serialize(s):
-        return [ [int(x.group(1)),( int(x.group(3)) if x.group(3) else 1 if x.group(2) else 0)] for x in re.finditer('(-?\d)(x?)\^?(\d+)?', s)]
+        return [[1 if x.group(1) == 'x' or not x.group(1) else int(x.group(1)), int(x.group(2)) if x.group(1) == 'x' and x.group(2) else int(x.group(3)) if x.group(3) else 1] for x in re.finditer('(-?\d+)?(x)\^?(-?\d+)?', s)] + [[int(x.group(1)), 0]for x in re.finditer('(?<!\^)(\d+)(?!x)', s)]
     
     def pad(len):
         ret = ''
@@ -43,7 +43,7 @@ def solve(input):
         ret = []
         for i in a:
             for j in b:
-                ret.append([str(j[0]) + i[0], j[1] + i[1]])
+                ret.append([(str(j[0]) if j[0] != 1 else '') + i[0], j[1] + i[1]])
         return ret
     
     for i in range(len(input)):
@@ -101,31 +101,34 @@ def solve(input):
     i = 0
     def compile(v):
         return '0' if len(v) == 0 else ' + '.join(v)
-
+    simplified_bm = []
+    simplified_a = []
+    degree = 0
     while(True):
         working = False
-        c = []
-        for j in range(len(a)):
-            if(a[j][1] == i):
-                c.append(build(a[j]))
+        current_bm = []
+        current_a = []
+        for i in a:
+            if(degree == i[1]):
                 working = True
-        d = []
-        for j in range(len(bm)):
-            if(bm[j][1] == i):
-                d.append(build(bm[j]))
+                current_a.append(str(i[0]))
+        for i in bm:
+            if(degree == i[1]):
+                current_bm.append(i[0]) 
                 working = True
-
-        ret.append(compile(c) + ' = ' + compile(d))
-        i += 1
         if(not working):
             break
-    bbb = []
+        simplified_bm.append(current_bm if len(current_bm) > 0 else '0')
+        simplified_a.append(current_a if len(current_a) > 0 else '0')
+        degree += 1
+    
+    expression = []
     for i in range(len(b)):
-        bb = []
+        term = []
         for j in b[i]:
-            bb.append(build(j))
-        bbb.append('[' + ('(' + ' + '.join(bb) + ')' if len(bb) > 1 else bb[0]) + '/' + div[i]+']')
-    print(' + '.join(bbb))
+            term.append(build(j))
+        expression.append('[' + ('(' + ' + '.join(term) + ')' if len(term) > 1 else term[0]) + '/' + div[i]+']')
+    print(' + '.join(expression))
     print()
-    for i in ret[:-1]:
-        print(i)
+    for i in range(len(simplified_a)):
+        print(' + '.join(simplified_bm[i]) + ' = ' + ' + '.join(simplified_a[i]))
