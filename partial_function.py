@@ -87,8 +87,6 @@ def solve(input):
     for i in range(len(b)):
         bm += mul_str_int(b[i],bmul[i])
 
-    
-
     def build(obj):
         if(obj[1]) == 0:
             return str(obj[0])
@@ -98,9 +96,6 @@ def solve(input):
 
     ret = []
 
-    i = 0
-    def compile(v):
-        return '0' if len(v) == 0 else ' + '.join(v)
     simplified_bm = []
     simplified_a = []
     degree = 0
