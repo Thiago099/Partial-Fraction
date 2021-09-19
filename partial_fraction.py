@@ -94,8 +94,6 @@ def solve(input):
             return str(obj[0]) + 'x'
         return str(obj[0]) + 'x^' + str(obj[1])
 
-    ret = []
-
     simplified_bm = []
     simplified_a = []
     degree = 0
