@@ -1,10 +1,6 @@
 import re
 import copy
 def solve(input):
-    for i in range(len(input)):
-        if(input[i] == '/'):
-            break
-
     def serialize(s):
         return [ [int(x.group(1)),( int(x.group(3)) if x.group(3) else 1 if x.group(2) else 0)] for x in re.finditer('(-?\d)(x?)\^?(\d+)?', s)]
 
@@ -50,7 +46,10 @@ def solve(input):
             for j in b:
                 ret.append([str(j[0]) + i[0], j[1] + i[1]])
         return ret
-        
+    
+    for i in range(len(input)):
+        if(input[i] == '/'):
+            break
     a = serialize(input[:i])
     preb = [ [(int(x.group(2)) if x.group(2) else 1), x.group(1)] for x in re.finditer('(\(.*?\))\^?(\d+)?',input[i+1::])]
 
