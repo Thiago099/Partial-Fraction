@@ -7,7 +7,7 @@ def solve(input):
     def pad(len):
         ret = ''
         for i in range(len):
-            ret+='\t'
+            ret += '\t'
         return ret
 
     def power(exp, value):
