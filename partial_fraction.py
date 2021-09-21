@@ -86,7 +86,7 @@ def solve(input):
     bm = []
     for i in range(len(b)):
         bm += mul_str_int(b[i],bmul[i])
-
+        
     def build(obj):
         if(obj[1]) == 0:
             return str(obj[0])
