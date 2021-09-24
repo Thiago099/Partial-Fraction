@@ -116,6 +116,9 @@ def solve(input):
         simplified_a.append(sum_a)
         degree += 1
 
+    # for i in range(len(simplified_a)):
+    #     print(' + '.join(simplified_bm[i]) + ' = ' + str(simplified_a[i]))
+
     split_bm = []
     width = 0
     for i in simplified_bm:
@@ -167,3 +170,4 @@ def solve(input):
                     term.append(j[0] + build(j))
         expression.append('[' + ('(' + ' + '.join(term) + ')' if len(term) > 1 else term[0] if len(term) == 1 else '0') + '/' + div[i]+']')
     return ' + ' . join(expression)
+    
