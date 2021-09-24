@@ -108,7 +108,7 @@ def solve(input):
                 working = True
         if(not working):
             break
-        simplified_bm.append(current_bm if len(current_bm) > 0 else '0')
+        simplified_bm.append(current_bm if len(current_bm) > 0 else ['0'])
         
         sum_a = 0
         for i in current_a:
@@ -125,13 +125,14 @@ def solve(input):
         current_line = []
         for j in i:
             result = re.search(r'(-?\d+)?(\w)', j)
+            if(ord(result.group(2)) < ord('A')): continue
             current_symbol = [ord(result.group(2)) - ord('A'), int(result.group(1))] if result.group(1) else [ord(result.group(2)) - ord('A'), 1]
             if(current_symbol[0] > width):
                 width = current_symbol[0]
             current_line.append(current_symbol)
         split_bm.append(current_line)
-    
-    
+
+
     matrix_bm = []
     for i in range(len(split_bm)):
         current_line = [0 for j in range(width+1)]
@@ -146,7 +147,7 @@ def solve(input):
     for i in matrix_bm:
         for j in range(len(i)-1):
             if(i[j] == 1):
-                solved_bm[chr(j+ord('A'))] = i[len(i)-1]
+                solved_bm[chr(j + ord('A'))] = i[len(i)-1]
     
     def build(obj):
         if(obj[1]) == 0:
