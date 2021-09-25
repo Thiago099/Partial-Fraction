@@ -72,7 +72,7 @@ def solve(input):
             bmul.append(cur)
                     
             highest = 1
-            for k in re.finditer('\^(\d+)', preb[i][1]):
+            for k in re.finditer(r'\^(\d+)', preb[i][1]):
                 kk = int(k.group(1))
                 if(kk > highest):
                     highest = kk
