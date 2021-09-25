@@ -49,7 +49,7 @@ def solve(input):
     for i in input:
         current_a, current_b = split(i)
         current = []
-        for j in re.finditer(r'(-?\d+)?(\w)', current_a):
+        for j in re.finditer(r'(-?\d+)?(\w+)', current_a):
             key = j.group(2)
             if(not key in index):
                 index.append(key)
