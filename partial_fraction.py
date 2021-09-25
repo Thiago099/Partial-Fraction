@@ -141,7 +141,7 @@ def solve(input):
         current_line.append(simplified_a[i])
         matrix_bm.append(current_line)
 
-    si.solve(matrix_bm)
+    si.solve_matrix(matrix_bm)
     
     solved_bm = {}
     for i in matrix_bm:
