@@ -5,13 +5,30 @@ import system as si
 
 def solve(input):
     def serialize(s):
-        return [[1 if x.group(1) == 'x' or not x.group(1) else int(x.group(1)), int(x.group(2)) if x.group(1) == 'x' and x.group(2) else int(x.group(3)) if x.group(3) else 1] for x in re.finditer(r'(-?\d+)?(x)\^?(-?\d+)?', s)] + [[int(x.group(1)), 0]for x in re.finditer(r'(?<!\^)(\d+)(?!x)', s)]
+        return [[(1 if not x.group(1) else -1) if x.group(2) == 'x' or not x.group(2) else (int(x.group(2))  if not x.group(1) else int('-' + x.group(2))), int(x.group(3)) if x.group(2) == 'x' and x.group(3) else int(x.group(4)) if x.group(4) else 1] for x in re.finditer(r'(-?)(\d+)?(x)\^?(-?\d+)?', s)] + [[int(x.group(1)), 0] for x in re.finditer(r'(?<!\^)(\d+)(?!x)', s)]
     
     def pad(len):
         ret = ''
         for i in range(len):
             ret += '\t'
         return ret
+
+    def simplify(input):
+            simplfied = []
+            for i in range(len(input)):
+                found = False
+                for j in simplfied:
+                    if(input[i][1] == j[1]):
+                        found = True
+                        break
+                if(found):
+                    continue
+                cur = input[i]
+                for j in range(len(input)):
+                    if(j != i and cur[1] == input[j][1]):
+                        cur[0] += input[j][0]
+                simplfied.append(cur)
+            return simplfied
 
     def power(exp, value):
         applied = []
@@ -26,21 +43,15 @@ def solve(input):
             b.append(cur + '[1]')
             depth += 1
         exec(command + '\n' + pad(depth) + 'applied.append([' + ' * '.join(a) + ', ' + ' + '.join(b) +'])')
-        simplfied = []
-        for i in range(len(applied)):
-            found = False
-            for j in simplfied:
-                if(applied[i][1] == j[1]):
-                    found = True
-                    break
-            if(found):
-                continue
-            cur = applied[i]
-            for j in range(len(applied)):
-                if(j != i and cur[1] == applied[j][1]):
-                    cur[0] += applied[j][0]
-            simplfied.append(cur)
-        return simplfied
+        return simplify(applied)
+
+    def multiply(a, b):
+        applied = []
+        for i in a:
+            for j in b:
+                applied.append([i[0] * j[0], i[1] + j[1]])
+        return simplify(applied)
+    
 
     def mul_str_int(a, b):
         ret = []
@@ -61,14 +72,32 @@ def solve(input):
     b = []
     bmul = []
     bc = []
+
     for i in preb:
-        bc.append(power(serialize(i[1]),i[0]))
+        bc.append(power(serialize(i[1]), i[0]))
+
+    def divide(a, b):
+        ret = []
+        for i in a:
+            if(i[0] == b[0]):
+                if(i[1] != b[1]):
+                    ret.append([b[0],i[1] - b[1]])
+            else:
+                ret.append(i)
+        return ret
+
+    bottom = [[serialize(i[1]), i[0]] for i in preb]
+
     for i in range(len(preb)):
         for j in range(preb[i][0]):
-            cbc =  copy.deepcopy(bc)
-            cj = cbc[i]
-            del cbc[i]
-            cur = cbc[0]
+            multiplier = divide(bottom, [serialize(preb[i][1]), j+1])
+            
+            simplified_mutiplier = [power(k[0], k[1]) for k in multiplier]
+
+            cur = simplified_mutiplier[0]
+            for k in range(1, len(simplified_mutiplier)):
+                cur = multiply(cur, simplified_mutiplier[k])
+
             bmul.append(cur)
                     
             highest = 1
@@ -86,10 +115,10 @@ def solve(input):
             b.append(cb)
             letter += highest 
             div.append(preb[i][1] + ('^' + str(j+1) if j > 0 else ''))
+
     bm = []
     for i in range(len(b)):
         bm += mul_str_int(b[i],bmul[i])
-        
 
     simplified_bm = []
     simplified_a = []
@@ -168,7 +197,7 @@ def solve(input):
                     else:
                         term.append(build(j))
                 else:
-                    term.append(j[0] + build(j))
+                    term.append(str(k) + build(j))
         expression.append('[' + ('(' + ' + '.join(term) + ')' if len(term) > 1 else term[0] if len(term) == 1 else '0') + '/' + div[i]+']')
     return ' + ' . join(expression)
     
